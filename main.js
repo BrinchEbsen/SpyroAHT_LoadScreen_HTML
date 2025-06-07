@@ -119,55 +119,69 @@ function RandF() {
     return (n * C3) % 1.0;
 }
 
+/**
+ * Draw a semicircular sector to the canvas.
+ * 
+ * r1, r2 and r3 are the tree radii for the sector.
+ * The sector is drawn from r1 (inner) to r3 (outer), with r2 in the middle,
+ * and the bit between r1 and r2 is drawn with a gradient.
+ * 
+ * The start and end angles are in radians.
+ */
 function drawSector(r1, r2, r3, angStart, angEnd, color) {
-    ctx.save();
-
+    //Get the middle point of the canvas.
     const middle = [
         ctx.canvas.width/2,
         ctx.canvas.height/2
     ];
 
+    //Create a gradient that starts from the middle and to the outer radius.
     const gradient = ctx.createRadialGradient(middle[0], middle[1], 0, middle[0], middle[1], r3);
 
+    //Get the ratios of the inner and middle radii.
     const angRatio1 = r1/r3;
     const angRatio2 = r2/r3;
 
+    //Create the color stops
     gradient.addColorStop(0, "transparent");
     gradient.addColorStop(angRatio1, "transparent");
     gradient.addColorStop(angRatio2, color);
     gradient.addColorStop(1, color);
 
+    //Fill out an arc with the gradient
+
     ctx.fillStyle = gradient;
 
     ctx.beginPath();
-    ctx.moveTo(middle[0], middle[1]);
+    ctx.moveTo(middle[0], middle[1]); //Move to center
     ctx.arc(middle[0], middle[1], r3, angStart, angEnd);
-    ctx.lineTo(middle[0], middle[1]);
+    ctx.lineTo(middle[0], middle[1]); //Move to center again to end shape
     ctx.closePath();
 
     ctx.fill();
-
-    ctx.restore();
 }
 
+//Fill background with black
 function clearBackground() {
-    ctx.save();
-
     ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.fillStyle = "black";
     ctx.fill();
-
-    ctx.restore();
 }
 
+//Draw the state of the loading screen to the canvas with the current state.
+//Almost 1-to-1 to the actual in-game code.
 function drawFrame() {
     clearBackground();
 
+    //Reset the RNG seed
     randSeed = startSeed;
 
+    //The counter but 1000 times smaller
     const timeLine = counter * 0.001;
+    //Value that cycles between 0 and 1 every 1000 frames
     const timeCycle = timeLine % 1.0;
 
+    //Draw all sectors
     for (let i = 0; i < numSectors; i++) {
         //scratch variables
         let n1 = 0;
@@ -193,11 +207,12 @@ function drawFrame() {
         n2 = RandF(); //Range: 0 to 1
         const startAng = timeLine * (n2 * 20.0 - 10.0) + n1;
 
-        //Calculate end angle
+        //End angle
         n1 = RandF() * 80.0 + 16.0; //Range: 16 to 96
         const endAng = n1 * 0.017453292 + startAng;
 
-        //Calculate colors. Original game code uses alpha 0-128.
+        //Calculate colors.
+        //Original game code uses alpha 0-128.
         //We convert that to 0 to 1 afterwards.
 
         let alpha = lifeCycle * 1000.0;
@@ -255,7 +270,7 @@ function startInterval() {
 function main() {
     startInterval();
 
-    testRandF();
+    //testRandF();
 }
 
 main();
