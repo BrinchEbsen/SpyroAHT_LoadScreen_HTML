@@ -1,8 +1,25 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-let counter = 2000;
+let counter = 0;
 let numSectors = 30;
+
+let speed = 1.0;
+
+const speedLabel = document.getElementById("speedLabel");
+const speedInput = document.getElementById("speed");
+
+function setSpeedLabel(val) {
+    speedLabel.textContent = `${val}x`;
+}
+
+speedInput.value = speed;
+setSpeedLabel(speedInput.value);
+
+speedInput.addEventListener("input", (e) => {
+    setSpeedLabel(e.target.value);
+    speed = Number(e.target.value);
+});
 
 //Converts hex string into IEEE754 float
 //https://gist.github.com/laerciobernardo/498f7ba1c269208799498ea8805d8c30
@@ -53,7 +70,7 @@ function RandF() {
     return (n * C3) % 1.0;
 }
 
-function drawSector(r1, r2, r3, angStart, angEnd, color = "rgb(0 80 0 / 100%)") {
+function drawSector(r1, r2, r3, angStart, angEnd, color) {
     ctx.save();
 
     const middle = [
@@ -103,7 +120,6 @@ function drawFrame() {
     const timeCycle = timeLine % 1.0;
 
     for (let i = 0; i < numSectors; i++) {
-        //console.log("Sector "+i);
         //scratch variables
         let n1 = 0;
         let n2 = 0;
@@ -149,7 +165,7 @@ function drawFrame() {
         //Convert to percentage
         alpha = Math.round((alpha / 80.0) * 100);
 
-        const color = `rgb(0 80 0 / ${alpha}%)`
+        const color = `rgb(0 128 0 / ${alpha}%)`
 
         drawSector(radius1, radius2, radius3, startAng, endAng, color);
     }
@@ -173,7 +189,7 @@ function testRandF() {
 
 function startInterval() {
     setInterval(() => {
-        counter += 1.0;
+        counter += speed;
         drawFrame();
     }, 1000/60);
 }
