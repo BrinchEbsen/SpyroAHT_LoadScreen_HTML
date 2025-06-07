@@ -1,6 +1,8 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+//Counter
+
 let counter = 0;
 
 const counterLabel = document.getElementById("counter");
@@ -14,6 +16,8 @@ counterReset.addEventListener("click", (e) => {
     counter = 0;
     counterLabel.textContent = "0";
 });
+
+//Speed
 
 let speed = 1.0;
 
@@ -31,6 +35,30 @@ speedInput.addEventListener("input", (e) => {
     setSpeedLabel(e.target.value);
     speed = Number(e.target.value);
 });
+
+//Seed
+
+let startSeed = 0;
+
+const startSeedInput = document.getElementById("startSeed");
+startSeedInput.value = startSeed;
+
+startSeedInput.addEventListener("input", (e) => {
+    startSeed = e.target.value;
+});
+
+//Number of sectors
+
+let numSectors = 30;
+
+const numSectorsInput = document.getElementById("numSectors");
+numSectorsInput.value = numSectors;
+
+numSectorsInput.addEventListener("input", (e) => {
+    numSectors = e.target.value;
+});
+
+//Color
 
 const colorInput = document.getElementById("color");
 const colorReset = document.getElementById("resetColor");
@@ -52,23 +80,11 @@ colorReset.addEventListener("click", (e) => {
     resetSectorColor();
 });
 
-let numSectors = 30;
 
-const numSectorsInput = document.getElementById("numSectors");
-numSectorsInput.value = numSectors;
 
-numSectorsInput.addEventListener("input", (e) => {
-    numSectors = e.target.value;
-});
+//---------------------------------------------------------
 
-let startSeed = 0;
 
-const startSeedInput = document.getElementById("startSeed");
-startSeedInput.value = startSeed;
-
-startSeedInput.addEventListener("input", (e) => {
-    startSeed = e.target.value;
-});
 
 //Converts hex string into IEEE754 float
 //https://gist.github.com/laerciobernardo/498f7ba1c269208799498ea8805d8c30
@@ -194,13 +210,19 @@ function drawFrame() {
         //console.log("lifeCycle: "+lifeCycle);
 
         //radii
+        
         n1 = RandF() * 4.0 + 10.0; //Range: 10 to 14
         n2 = n1 - (lifeCycle * 10.0);
-        n1 = RandF() * 80.0 + 50.0; //Range: 50 to 130
+        let radius2 = 400.0 / n2; //Radius dividing the two sectors
 
-        const radius2 = 400.0 / n2; //Radius dividing the two sectors
-        const radius3 = radius2 + (n1 / n2); //Outer radius
-        const radius1 = radius2 - (n1 * (1.0/8.0)); //Inner radius
+        n1 = RandF() * 80.0 + 50.0; //Range: 50 to 130
+        let radius3 = radius2 + (n1 / n2); //Outer radius
+        
+        let radius1 = radius2 - (n1 * (1.0/8.0)); //Inner radius
+
+        //Extra validation
+        if (radius2 > radius3) radius2 = radius3;
+        if (radius1 > radius2) radius1 = radius2;
 
         //Start angle
         n1 = RandF() * Math.PI * 2; //Range: 0 to 2*PI
