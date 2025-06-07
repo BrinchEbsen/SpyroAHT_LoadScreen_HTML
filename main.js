@@ -21,6 +21,26 @@ speedInput.addEventListener("input", (e) => {
     speed = Number(e.target.value);
 });
 
+const colorInput = document.getElementById("color");
+const colorReset = document.getElementById("resetColor");
+
+let sectorColor;
+
+function resetSectorColor() {
+    sectorColor = "#008000";
+    colorInput.value = sectorColor;
+}
+
+resetSectorColor();
+
+colorInput.addEventListener("change", (e) => {
+    sectorColor = e.target.value;
+});
+
+colorReset.addEventListener("click", (e) => {
+    resetSectorColor();
+});
+
 //Converts hex string into IEEE754 float
 //https://gist.github.com/laerciobernardo/498f7ba1c269208799498ea8805d8c30
 function parseFloat(str) {
@@ -149,7 +169,7 @@ function drawFrame() {
         const endAng = n1 * 0.017453292 + startAng;
 
         //Calculate colors. Original game code uses alpha 0-128.
-        //We convert that to 0% to 100% afterwards.
+        //We convert that to 0 to 1 afterwards.
 
         let alpha = lifeCycle * 1000.0;
 
@@ -162,10 +182,18 @@ function drawFrame() {
         if (alpha < 0) alpha = 0;
         if (alpha > 80.0) alpha = 80.0;
 
-        //Convert to percentage
-        alpha = Math.round((alpha / 80.0) * 100);
+        //Convert to ratio
+        alpha = (alpha / 80.0);
 
-        const color = `rgb(0 128 0 / ${alpha}%)`
+        //Convert to alpha, 0 to FF
+        alpha = Math.floor(alpha * 0xFF);
+        alpha = alpha.toString(16);
+
+        //Pad length to 2 characters
+        if (alpha.length < 2) alpha = "0"+alpha;
+
+        //Add alpha to base colour
+        const color = sectorColor + alpha;
 
         drawSector(radius1, radius2, radius3, startAng, endAng, color);
     }
