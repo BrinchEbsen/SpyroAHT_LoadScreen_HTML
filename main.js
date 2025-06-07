@@ -2,7 +2,18 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 let counter = 0;
-let numSectors = 30;
+
+const counterLabel = document.getElementById("counter");
+
+function updateCounterLabel() {
+    counterLabel.textContent = counter.toFixed(2);
+}
+
+const counterReset = document.getElementById("resetCounter");
+counterReset.addEventListener("click", (e) => {
+    counter = 0;
+    counterLabel.textContent = "0";
+});
 
 let speed = 1.0;
 
@@ -39,6 +50,24 @@ colorInput.addEventListener("change", (e) => {
 
 colorReset.addEventListener("click", (e) => {
     resetSectorColor();
+});
+
+let numSectors = 30;
+
+const numSectorsInput = document.getElementById("numSectors");
+numSectorsInput.value = numSectors;
+
+numSectorsInput.addEventListener("input", (e) => {
+    numSectors = e.target.value;
+});
+
+let startSeed = 0;
+
+const startSeedInput = document.getElementById("startSeed");
+startSeedInput.value = startSeed;
+
+startSeedInput.addEventListener("input", (e) => {
+    startSeed = e.target.value;
 });
 
 //Converts hex string into IEEE754 float
@@ -134,7 +163,7 @@ function clearBackground() {
 function drawFrame() {
     clearBackground();
 
-    randSeed = 0;
+    randSeed = startSeed;
 
     const timeLine = counter * 0.001;
     const timeCycle = timeLine % 1.0;
@@ -218,13 +247,12 @@ function testRandF() {
 function startInterval() {
     setInterval(() => {
         counter += speed;
+        updateCounterLabel();
         drawFrame();
     }, 1000/60);
 }
 
 function main() {
-    //drawFrame();
-
     startInterval();
 
     testRandF();
