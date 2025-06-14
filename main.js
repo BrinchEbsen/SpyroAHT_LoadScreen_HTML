@@ -1,6 +1,8 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+const rainbowCheckbox = document.getElementById("rainbow");
+
 //Counter
 
 let counter = 0;
@@ -377,8 +379,22 @@ function drawFrame() {
         //Pad length to 2 characters
         if (alpha.length < 2) alpha = "0"+alpha;
 
-        //Add alpha to base colour
-        const color = sectorColor + alpha;
+        let color;
+        if (rainbowCheckbox.checked) {
+            //Store the random seed so it doesn't affect later drawn sectors
+            let tempSeed = randSeed;
+            let r = Rand32() % 0xFF;
+            let g = Rand32() % 0xFF;
+            let b = Rand32() % 0xFF;
+            randSeed = tempSeed;
+            if (r < 0x10) r = 0x10;
+            if (g < 0x10) g = 0x10;
+            if (b < 0x10) b = 0x10;
+            color = "#" + r.toString(16) + g.toString(16) + b.toString(16);
+        } else {
+            color = sectorColor;
+        }
+        color += alpha;
 
         drawSector(radius1, radius2, radius3, startAng, endAng, color);
     }
