@@ -3,6 +3,23 @@ const ctx = canvas.getContext("2d");
 
 const rainbowCheckbox = document.getElementById("rainbow");
 
+const resolutionButtons = document.querySelectorAll('[name="resolution"]');
+
+resolutionButtons.forEach(btn => {
+    btn.addEventListener("input", (e) => {
+        const tgt = e.target;
+
+        const sizes = tgt.getAttribute("value").split("x");
+
+        canvas.width = sizes[0];
+        canvas.height = sizes[1];
+
+        console.log(sizes);
+    });
+});
+
+resolutionButtons[1].checked = true;
+
 //Counter
 
 let counter = 0;
